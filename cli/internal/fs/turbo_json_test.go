@@ -9,7 +9,7 @@ import (
 	"github.com/vercel/turborepo/cli/internal/util"
 )
 
-func Test_ReadTurboJSON(t *testing.T) {
+func Test_ReadTurboConfig(t *testing.T) {
 	defaultCwd, err := os.Getwd()
 	if err != nil {
 		t.Errorf("failed to get cwd: %v", err)
@@ -18,8 +18,14 @@ func Test_ReadTurboJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("cwd is not an absolute directory %v: %v", defaultCwd, err)
 	}
-	turboJSONPath := cwd.Join("testdata", "turbo.json")
-	turboJSON, err := ReadTurboJSON(turboJSONPath)
+
+	rootDir := "testdata"
+	turboJSONPath := cwd.Join(rootDir)
+	packageJSONPath := cwd.Join(rootDir, "package.json")
+	rootPackageJSON, err := ReadPackageJSON(packageJSONPath.ToStringDuringMigration())
+
+	turboJSON, err := ReadTurboConfig(turboJSONPath, rootPackageJSON)
+
 	if err != nil {
 		t.Fatalf("invalid parse: %#v", err)
 	}
